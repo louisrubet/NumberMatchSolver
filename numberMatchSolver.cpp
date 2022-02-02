@@ -28,6 +28,8 @@ class NumberMatch {
         int secondIdx;
     };
 
+    vector<Cut>& cuts() { return _cuts; }
+
     void show(Cut cut = {-1, -1}) {
         for (int i = 0; i < _grid.size(); i++) {
             if (i == cut.firstIdx || i == cut.secondIdx)
@@ -175,17 +177,16 @@ class NumberMatch {
         }
     }
 
-    vector<Cut> _cuts; // access to the cuts which lead to this game
-
   private:
     const int _lineLength;
     vector<int> _grid;
     int _add;
     bool _stopAtFirstSuccess;
     bool _diagonals;
+    vector<Cut> _cuts; // access to the cuts which lead to this game
+
     static set<vector<int>> s_playedGrids;
     static bool s_stopRecurrence;
-
 };
 
 set<vector<int>> NumberMatch::s_playedGrids;
@@ -313,7 +314,7 @@ int main(int argc, char* argv[]) {
                 NumberMatch game = numberMatch;
                 cout << "Game " << gameIdx << endl << endl;
                 gameIdx++;
-                for (auto& cut : match._cuts) {
+                for (auto& cut : match.cuts()) {
                     game.show(cut);
                     game.play(cut);
                     if (interactive) {
