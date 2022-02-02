@@ -1,9 +1,9 @@
+#include <algorithm>
 #include <getopt.h>
 #include <iostream>
 #include <set>
 #include <string>
 #include <vector>
-#include <algorithm>
 using namespace std;
 
 static const char TERM_INVERSE[] = "\x1b[7m";
@@ -78,9 +78,9 @@ class NumberMatch {
             }
         } while (lineCleared);
 
-        for (const int& entry : _grid)
-            if (entry != 0)
-                return false; // game is not successful
+        if (any_of(_grid.cbegin(), _grid.cend(), [](const int& entry) {
+            return entry != 0; }))
+            return false; // game is not successful
         return true;          // all entries are disabled or grid is empty ->success!
     }
 
