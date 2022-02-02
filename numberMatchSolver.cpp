@@ -53,8 +53,8 @@ class NumberMatch {
         } else {
             // or duplicate the grid (cut -1,-1 is magic)
             if (_add > 0) {
-                int imax = _grid.size();
-                for (int i = 0; i < imax; i++)
+                size_t imax = _grid.size();
+                for (size_t i = 0; i < imax; i++)
                     if (_grid[i] != 0)
                         _grid.push_back(_grid[i]);
                 _add--;
@@ -64,10 +64,10 @@ class NumberMatch {
         // clear lines
         bool lineCleared;
         do {
-            int j;
+            size_t j;
             lineCleared = false;
-            for (int i = 0; i < _grid.size(); i += _lineLength) {
-                int jMax = i + _lineLength < _grid.size() ? i + _lineLength : _grid.size();
+            for (size_t i = 0; i < _grid.size(); i += (size_t)_lineLength) {
+                size_t jMax = i + _lineLength < _grid.size() ? i + _lineLength : _grid.size();
                 for (j = i; j < jMax && _grid[j] == 0; j++)
                     ;
                 if (j == jMax) { // this line is full of disabled boxes -> clear it
@@ -175,19 +175,17 @@ class NumberMatch {
         }
     }
 
+    vector<Cut> _cuts; // access to the cuts which lead to this game
+
   private:
     const int _lineLength;
     vector<int> _grid;
     int _add;
     bool _stopAtFirstSuccess;
     bool _diagonals;
-
-  private:
     static set<vector<int>> s_playedGrids;
     static bool s_stopRecurrence;
 
-  public:
-    vector<Cut> _cuts; // access to the cuts which lead to this game
 };
 
 set<vector<int>> NumberMatch::s_playedGrids;
@@ -215,14 +213,11 @@ int main(int argc, char* argv[]) {
     int add = 4;
     bool diagonals = true;
 
-    struct option long_options[] = {{"one-cut", no_argument, 0, 'o'},
-                                    {"continue", no_argument, 0, 'c'},
-                                    {"interactive", no_argument, 0, 'i'},
-                                    {"line-length", required_argument, 0, 'l'},
-                                    {"add", required_argument, 0, 'a'},
-                                    {"diagonals", no_argument, 0, 'd'},
-                                    {"help", no_argument, 0, 'h'},
-                                    {0, 0, 0, 0}};
+    struct option long_options[] = {
+        {"one-cut", no_argument, nullptr, 'o'},     {"continue", no_argument, nullptr, 'c'},
+        {"interactive", no_argument, nullptr, 'i'}, {"line-length", required_argument, nullptr, 'l'},
+        {"add", required_argument, nullptr, 'a'},   {"diagonals", no_argument, nullptr, 'd'},
+        {"help", no_argument, nullptr, 'h'},        {nullptr, 0, nullptr, 0}};
 
     bool parse = true;
     while (parse) {
@@ -268,6 +263,9 @@ int main(int argc, char* argv[]) {
         case -1:
             parse = false;
             break;
+        default:
+            syntax();
+            return EXIT_FAILURE;
         }
     }
 
@@ -313,7 +311,8 @@ int main(int argc, char* argv[]) {
             int gameIdx = 1;
             for (auto& match : winningGames) {
                 NumberMatch game = numberMatch;
-                cout << "Game " << gameIdx++ << endl << endl;
+                cout << "Game " << gameIdx << endl << endl;
+                gameIdx++;
                 for (auto& cut : match._cuts) {
                     game.show(cut);
                     game.play(cut);
