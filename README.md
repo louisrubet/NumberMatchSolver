@@ -11,11 +11,11 @@ Recursion. Complexity is reduced by deleting the grids already played.
 By default
 - the grid has 9 columns,
 - numbers can match horizontally, vertically or diagonally,
-- the solver stops after first winning sequence is attained (configurable),
+- the solver stops after first winning sequence is attained,
 - the grid numbers can be duplicated until 4 times when no cut is possible,
 - the winning sequence is shown in once, but you can unroll it interactively.
 
-These topics are configurable.
+All these topics are configurable.
 
 ## build
 The build process uses [cmake](https://cmake.org/) and your favorite C++ compiler.
@@ -42,7 +42,7 @@ Options can be:
 ex: ./numberMatchSolver --interactive 262557596931762454465213897
 ```
 
-## which game does it solves
+## which games does it solves
 [Number Match](https://play.google.com/store/apps/details?id=com.easybrain.number.puzzle.game) by Easybrain
 
 [Number Match](https://play.google.com/store/apps/details?id=com.board.free.number.match.puzzle.game) by Happy Coloring Platform
