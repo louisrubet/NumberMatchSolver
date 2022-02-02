@@ -78,10 +78,9 @@ class NumberMatch {
             }
         } while (lineCleared);
 
-        if (any_of(_grid.cbegin(), _grid.cend(), [](const int& entry) {
-            return entry != 0; }))
+        if (any_of(_grid.cbegin(), _grid.cend(), [](const int& entry) { return entry != 0; }))
             return false; // game is not successful
-        return true;          // all entries are disabled or grid is empty ->success!
+        return true;      // all entries are disabled or grid is empty ->success!
     }
 
     bool areEqual(int index1, int index2) {
@@ -144,7 +143,7 @@ class NumberMatch {
         }
 
         // nothing found? A grid duplication is still possible
-        if (found.size() == 0)
+        if (found.empty())
             found.push_back({-1, -1});
     }
 
