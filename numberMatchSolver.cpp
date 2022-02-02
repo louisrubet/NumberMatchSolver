@@ -154,7 +154,7 @@ class NumberMatch {
         // find a cut
         vector<Cut> cuts;
         findCuts(cuts);
-        for (auto& cut : cuts) {
+        for (const auto& cut : cuts) {
             NumberMatch next = *this;  // duplicate the grid
             next._cuts.push_back(cut); // add this cut to the cuts history
             bool playResult = next.play(cut);
@@ -287,7 +287,7 @@ int main(int argc, char* argv[]) {
         bool oneCutAtLeast = false;
 
         numberMatch.findCuts(cuts);
-        for (auto& cut : cuts) {
+        for (const auto& cut : cuts) {
             if (cut.firstIdx != -1 && cut.secondIdx != -1) { // cut -1,-1 means duplication
                 cout << "A cut was found at " << cut.firstIdx + 1 << " and " << cut.secondIdx + 1 << endl;
                 oneCutAtLeast = true;
@@ -303,7 +303,7 @@ int main(int argc, char* argv[]) {
         vector<NumberMatch> winningGames;
         numberMatch.solve(winningGames);
 
-        if (winningGames.size() == 0)
+        if (winningGames.empty())
             cout << endl << "No winning cut sequences found" << endl;
         else {
             // show them all
@@ -312,7 +312,7 @@ int main(int argc, char* argv[]) {
                 NumberMatch game = numberMatch;
                 cout << "Game " << gameIdx << endl << endl;
                 gameIdx++;
-                for (auto& cut : match.cuts()) {
+                for (const auto& cut : match.cuts()) {
                     game.show(cut);
                     game.play(cut);
                     if (interactive) {
