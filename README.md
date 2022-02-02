@@ -1,4 +1,4 @@
-# NumberMatchSolver 
+# NumberMatchSolver [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=louisrubet_NumberMatchSolver&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=louisrubet_NumberMatchSolver)
 
 This is a solver for the classic number matching game, written in C++ under MIT license.
 

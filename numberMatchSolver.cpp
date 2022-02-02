@@ -15,12 +15,7 @@ class NumberMatch {
         : _lineLength(lineLength), _add(add), _stopAtFirstSuccess(stopAtFirstSuccess), _diagonals(diagonals) {}
 
     bool fromString(string& input) {
-        for_each(input.begin(), input.end(), [&](const char& c) {
-            if (c >= '0' && c <= '9')
-                _grid.push_back(c - '0');
-            else
-                _grid.push_back(0);
-        });
+        for_each(input.begin(), input.end(), [&](const char& c) { _grid.push_back((c >= '0' && c <= '9') ? c : '.'); });
         return true;
     }
 
@@ -33,14 +28,8 @@ class NumberMatch {
 
     void show(Cut cut = {-1, -1}) {
         for (int i = 0; i < _grid.size(); i++) {
-            if (i == cut.firstIdx || i == cut.secondIdx)
-                cout << TERM_INVERSE;
-            if (_grid[i] != 0)
-                cout << _grid[i];
-            else
-                cout << '.';
-            if (i == cut.firstIdx || i == cut.secondIdx)
-                cout << TERM_RESET;
+            bool inverse = (i == cut.firstIdx || i == cut.secondIdx);
+            cout << (inverse ? TERM_INVERSE : "") << _grid[i] << (inverse ? TERM_RESET : "");
             if (i > 0 && ((i + 1) % _lineLength) == 0)
                 cout << endl;
         }
@@ -51,13 +40,13 @@ class NumberMatch {
     bool play(Cut cut) {
         // play: disable cut indexes
         if (cut.firstIdx != -1 && cut.secondIdx != -1) {
-            _grid[cut.firstIdx] = 0;
-            _grid[cut.secondIdx] = 0;
+            _grid[cut.firstIdx] = '.';
+            _grid[cut.secondIdx] = '.';
         } else if (_add > 0) {
             // or duplicate the grid (cut -1,-1 is magic)
             size_t imax = _grid.size();
             for (size_t i = 0; i < imax; i++)
-                if (_grid[i] != 0)
+                if (_grid[i] != '.')
                     _grid.push_back(_grid[i]);
             _add--;
         }
@@ -69,7 +58,7 @@ class NumberMatch {
             lineCleared = false;
             for (size_t i = 0; i < _grid.size(); i += (size_t)_lineLength) {
                 size_t jMax = i + _lineLength < _grid.size() ? i + _lineLength : _grid.size();
-                for (j = i; j < jMax && _grid[j] == 0; j++)
+                for (j = i; j < jMax && _grid[j] == '.'; j++)
                     ;
                 if (j == jMax) { // this line is full of disabled boxes -> clear it
                     _grid.erase(_grid.begin() + i, _grid.begin() + jMax);
@@ -78,13 +67,13 @@ class NumberMatch {
             }
         } while (lineCleared);
 
-        if (any_of(_grid.cbegin(), _grid.cend(), [](const int& entry) { return entry != 0; }))
+        if (any_of(_grid.cbegin(), _grid.cend(), [](const int& entry) { return entry != '.'; }))
             return false; // game is not successful
         return true;      // all entries are disabled or grid is empty ->success!
     }
 
     bool areEqual(int index1, int index2) {
-        return (_grid[index2] != 0 && (_grid[index1] == _grid[index2] || _grid[index1] + _grid[index2] == 10));
+        return (_grid[index2] != '0' && (_grid[index1] == _grid[index2] || _grid[index1] + _grid[index2] == ('1'+'9')));
     }
 
     void findCuts(vector<Cut>& found) {
@@ -92,20 +81,20 @@ class NumberMatch {
 
         // find next enabled box
         while (first < _grid.size() - 1) {
-            for (; _grid[first] == 0 && first < _grid.size() - 1; first++)
+            for (; _grid[first] == '.' && first < _grid.size() - 1; first++)
                 ;
             if (first == _grid.size() - 1)
                 break;
 
             // find horizontal box
             int second;
-            for (second = first + 1; second < _grid.size() && _grid[second] == 0; second++)
+            for (second = first + 1; second < _grid.size() && _grid[second] == '.'; second++)
                 ;
             if (second < _grid.size() && areEqual(first, second))
                 found.push_back({first, second});
 
             // find vertical box
-            for (second = first + _lineLength; second < _grid.size() && _grid[second] == 0; second += _lineLength)
+            for (second = first + _lineLength; second < _grid.size() && _grid[second] == '.'; second += _lineLength)
                 ;
             if (second < _grid.size() && areEqual(first, second))
                 found.push_back({first, second});
@@ -114,7 +103,7 @@ class NumberMatch {
                 // find diagonal right box
                 if (first % _lineLength != _lineLength - 1) {
                     bool preventWrap = false;
-                    for (second = first + _lineLength + 1; second < _grid.size() && _grid[second] == 0;
+                    for (second = first + _lineLength + 1; second < _grid.size() && _grid[second] == '.';
                          second += _lineLength + 1)
                         if ((second + 1) % _lineLength == 0) {
                             preventWrap = true;
@@ -127,7 +116,7 @@ class NumberMatch {
                 // find diagonal left box
                 if (first % _lineLength != 0) {
                     bool preventWrap = false;
-                    for (second = first + _lineLength - 1; second < _grid.size() && _grid[second] == 0;
+                    for (second = first + _lineLength - 1; second < _grid.size() && _grid[second] == '.';
                          second += _lineLength - 1) {
                         if ((second - 1) % _lineLength == _lineLength - 1) {
                             preventWrap = true;
@@ -177,17 +166,17 @@ class NumberMatch {
 
   private:
     const int _lineLength;
-    vector<int> _grid;
+    vector<char> _grid;
     int _add;
     bool _stopAtFirstSuccess;
     bool _diagonals;
     vector<Cut> _cuts; // access to the cuts which lead to this game
 
-    static set<vector<int>> s_playedGrids;
+    static set<vector<char>> s_playedGrids;
     static bool s_stopRecurrence;
 };
 
-set<vector<int>> NumberMatch::s_playedGrids;
+set<vector<char>> NumberMatch::s_playedGrids;
 bool NumberMatch::s_stopRecurrence = false;
 
 void syntax() {
