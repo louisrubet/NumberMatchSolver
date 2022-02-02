@@ -53,15 +53,13 @@ class NumberMatch {
         if (cut.firstIdx != -1 && cut.secondIdx != -1) {
             _grid[cut.firstIdx] = 0;
             _grid[cut.secondIdx] = 0;
-        } else {
+        } else if (_add > 0) {
             // or duplicate the grid (cut -1,-1 is magic)
-            if (_add > 0) {
-                size_t imax = _grid.size();
-                for (size_t i = 0; i < imax; i++)
-                    if (_grid[i] != 0)
-                        _grid.push_back(_grid[i]);
-                _add--;
-            }
+            size_t imax = _grid.size();
+            for (size_t i = 0; i < imax; i++)
+                if (_grid[i] != 0)
+                    _grid.push_back(_grid[i]);
+            _add--;
         }
 
         // clear lines
@@ -80,7 +78,7 @@ class NumberMatch {
             }
         } while (lineCleared);
 
-        for (auto& entry : _grid)
+        for (const int& entry : _grid)
             if (entry != 0)
                 return false; // game is not successful
         return true;          // all entries are disabled or grid is empty ->success!
