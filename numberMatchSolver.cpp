@@ -3,6 +3,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 static const char TERM_INVERSE[] = "\x1b[7m";
@@ -14,12 +15,12 @@ class NumberMatch {
         : _lineLength(lineLength), _add(add), _stopAtFirstSuccess(stopAtFirstSuccess), _diagonals(diagonals) {}
 
     bool fromString(string& input) {
-        for (int i = 0; i < input.length(); i++) {
-            if (input[i] >= '0' && input[i] <= '9')
-                _grid.push_back(input[i] - '0');
+        for_each(input.begin(), input.end(), [&](const char& c) {
+            if (c >= '0' && c <= '9')
+                _grid.push_back(c - '0');
             else
                 _grid.push_back(0);
-        }
+        });
         return true;
     }
 
